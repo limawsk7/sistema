@@ -44,6 +44,15 @@ function flash(string $type, string $message): void
     $_SESSION['flash'] = ['type' => $type, 'message' => $message];
 }
 
+function csrfToken(): string
+{
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
+    return $_SESSION['csrf_token'];
+}
+
 try {
     $db = database();
 } catch (Throwable $error) {
@@ -57,6 +66,12 @@ $notice = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $sentToken = (string) ($_POST['csrf_token'] ?? '');
+    if (!hash_equals(csrfToken(), $sentToken)) {
+        http_response_code(419);
+        exit('Sua sessão expirou. Volte à página e tente novamente.');
+    }
+
     $action = $_POST['action'] ?? '';
 
     if ($action === 'register') {
@@ -218,6 +233,7 @@ $appName = envValue('APP_NAME', 'Portal');
             <h1><?= $page === 'login' ? 'Entre na sua conta' : 'Crie sua conta' ?></h1>
             <p class="muted"><?= $page === 'login' ? 'Use seus dados para continuar.' : 'É rapidinho. Preencha os campos abaixo.' ?></p>
             <form method="post" class="form">
+                <input type="hidden" name="csrf_token" value="<?= e(csrfToken()) ?>">
                 <input type="hidden" name="action" value="<?= $page === 'login' ? 'login' : 'register' ?>">
                 <?php if ($page === 'cadastro'): ?>
                     <label for="name">Nome</label>
@@ -238,6 +254,7 @@ $appName = envValue('APP_NAME', 'Portal');
         <div class="content-list">
             <?php foreach ($contents as $item): ?>
                 <form method="post" class="edit-card">
+                    <input type="hidden" name="csrf_token" value="<?= e(csrfToken()) ?>">
                     <input type="hidden" name="action" value="save_content">
                     <input type="hidden" name="id" value="<?= (int) $item['Id'] ?>">
                     <div class="edit-card-head"><span class="content-number">0<?= (int) $item['Id'] ?></span><span><?= (int) $item['Id'] === 1 ? 'Página inicial' : 'Contato' ?></span></div>
