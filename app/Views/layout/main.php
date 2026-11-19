@@ -21,7 +21,7 @@
         <div class="account">
             <?php if (auth()->loggedIn()): ?>
                 <span>Olá, <?= esc(auth()->user()->username ?? 'usuário') ?></span>
-                <form action="<?= site_url('logout') ?>" method="post"><?= csrf_field() ?><button class="btn btn-light" type="submit">Sair</button></form>
+                <form action="<?= site_url('admin/sair') ?>" method="post"><?= csrf_field() ?><button class="btn btn-light" type="submit">Sair</button></form>
             <?php else: ?>
                 <a class="plain-link" href="<?= site_url('login') ?>">Entrar</a>
                 <a class="btn" href="<?= site_url('register') ?>">Criar conta</a>
