@@ -1,36 +1,44 @@
-# Sistema de conteúdo
+# Sistema
 
-Projeto PHP com MariaDB para publicar e editar os textos das páginas inicial e contato. A área administrativa exige uma conta autorizada.
+Aplicação de páginas públicas e gerenciamento de conteúdo, desenvolvida em PHP com CodeIgniter 4, Shield e MariaDB.
+
+## O que o sistema faz
+- Exibe a página inicial e a página de contato.
+- Permite cadastro e login de usuários.
+- Permite que usuários autenticados consultem e editem conteúdos.
+- Possui painel administrativo protegido por grupo.
+- Permite ao administrador listar, editar e atualizar conteúdos.
+- Permite encerrar a sessão.
 
 ## Requisitos
-- PHP 8.1 ou superior
+- PHP 8.2 ou superior
+- Composer
 - MariaDB 10.4+ ou MySQL compatível
-- Servidor Apache ou PHP embutido
+- Extensões PHP: intl, mbstring e mysqli
 
 ## Instalação
-1. Crie um banco chamado `sistema`.
-2. Importe o arquivo SQL fornecido pelo responsável pelo projeto.
-3. Copie `.env.example` para `.env` e preencha os dados de conexão.
-4. Configure o servidor para apontar para a pasta pública do projeto (ou use `php -S localhost:8000` na raiz para testar).
-5. Acesse `/index.php`.
+1. Clone este repositório.
+2. Execute `composer install`.
+3. Copie `.env.example` para `.env`.
+4. Importe `database/sistema.sql` no MariaDB.
+5. Ajuste as credenciais e a URL no arquivo `.env`.
+6. Execute `php spark serve` e abra `http://localhost:8080`.
 
-## Primeiro acesso administrativo
-Por segurança, novos cadastros recebem apenas o grupo `user`. Para liberar a área administrativa a uma conta já cadastrada, execute no banco, substituindo o e-mail:
+## Acesso administrativo
+O backup original continha dados de uma conta de terceiro, então eles não foram copiados. Cadastre uma conta pela tela de registro e promova o usuário desejado no banco:
 
 ```sql
-UPDATE auth_groups_users agu
-JOIN auth_identities ai ON ai.user_id = agu.user_id
-SET agu.`group` = 'admin'
-WHERE ai.type = 'email_password'
-  AND ai.secret = 'seu-email@exemplo.com';
+INSERT INTO auth_groups_users (user_id, `group`, created_at)
+SELECT id, 'admin', NOW()
+FROM users
+WHERE username = 'SEU_USUARIO'
+  AND NOT EXISTS (
+    SELECT 1 FROM auth_groups_users
+    WHERE user_id = users.id AND `group` = 'admin'
+  );
 ```
 
-O dump de exemplo contém um usuário chamado Admin, mas ele está no grupo `user`. Não reutilize hashes ou credenciais de terceiros.
+## Banco de dados
+A tabela `conteudo` conserva os registros do dump: ID 1 para a página inicial e ID 4 para contato. A página de contato usa o ID 4, conforme os dados reais do SQL recebido.
 
-## Estrutura
-- `index.php`: rotas, autenticação, páginas públicas e área administrativa.
-- `config.php`: leitura das variáveis de ambiente e conexão PDO.
-- `assets/css/style.css`: estilos da interface.
-- `.env.example`: modelo de configuração local.
-
-As páginas públicas leem os registros da tabela `conteudo`: ID 1 para início e ID 4 para contato, conforme o dump recebido. O painel permite editar esses registros sem criar novas seções ou recursos fora do escopo.
+O arquivo SQL não inclui e-mails, usuários ou hashes de senha de terceiros.
