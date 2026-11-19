@@ -12,7 +12,7 @@ abstract class BaseController extends Controller
 {
     protected $helpers = ['url', 'form', 'text'];
 
-    public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger)
+    public function initController(RequestInterface $request, ResponseInterface $response, LoggerInterface $logger): void
     {
         parent::initController($request, $response, $logger);
     }
