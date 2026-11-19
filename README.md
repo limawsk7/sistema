@@ -20,7 +20,7 @@ Aplicação de páginas públicas e gerenciamento de conteúdo, desenvolvida em 
 1. Clone este repositório.
 2. Execute `composer install`.
 3. Copie `.env.example` para `.env`.
-4. Importe `database/sistema.sql` no MariaDB.
+4. Crie um banco vazio chamado `sistema` e importe `database/sistema.sql` nele. Atenção: o script recria as tabelas; não o execute sobre um banco com dados que deseja manter.
 5. Ajuste as credenciais e a URL no arquivo `.env`.
 6. Execute `php spark serve` e abra `http://localhost:8080`.
 
