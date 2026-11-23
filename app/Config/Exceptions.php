@@ -36,5 +36,5 @@ class Exceptions extends BaseConfig
     /**
      * Não exibe dados sensíveis nos rastros de erro.
      */
-    public bool $sensitiveDataInTrace = false;
+    public array $sensitiveDataInTrace = [];
 }
