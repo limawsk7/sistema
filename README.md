@@ -42,3 +42,16 @@ WHERE username = 'SEU_USUARIO'
 A tabela `conteudo` conserva os registros do dump: ID 1 para a página inicial e ID 4 para contato. A página de contato usa o ID 4, conforme os dados reais do SQL recebido.
 
 O arquivo SQL não inclui e-mails, usuários ou hashes de senha de terceiros.
+
+## Configuração no servidor da faculdade
+
+O arquivo `.env.example` já contém o endereço do servidor MySQL utilizado pela faculdade:
+
+- Host: `192.168.51.20`
+- Banco: `sistema`
+- Driver: `MySQLi`
+- Porta: `3306`
+
+No servidor de hospedagem, copie `.env.example` para `.env` e informe o usuário e a senha fornecidos pela faculdade nos campos `database.default.username` e `database.default.password`. Ajuste também `app.baseURL` para o endereço real em que a aplicação será acessada.
+
+**Importante:** não coloque senhas reais no GitHub. O arquivo `.env` está no `.gitignore` justamente para manter credenciais fora do repositório. O servidor onde o PHP roda também precisa ter a extensão `mysqli` habilitada e permissão de conexão TCP com `192.168.51.20:3306`. Se a conexão falhar, verifique com o responsável pela rede/banco se o IP do servidor web está autorizado no MySQL e se a porta está liberada.
